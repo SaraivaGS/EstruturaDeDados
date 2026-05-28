@@ -2,7 +2,7 @@
 #  The location to insert your code is clearly marked -- it begins on line 32.
 #
 from SimpleGraphics import *
-from random import randrange, shuffle
+from random import randrange, shuffle, randint as random
 from time import time, sleep
 from math import sin, pi
 from copy import deepcopy
@@ -36,8 +36,22 @@ LOSE = -1
 ###############################################################################
 
 #
-#  Insert your implementation of createBoard here
-#
+#  Insert your implementation of createBoard her
+
+def createBoard(rows, cols, unique_pieces):
+    board = []  
+    
+    for i in range(rows):
+        row = []  
+        
+        for j in range(cols):
+          
+            random_piece = random(0, unique_pieces - 1)
+            row.append(random_piece)  
+            
+        board.append(row)  
+        
+    return board
 
 #
 #  Modify the board by swapping two pieces.
@@ -50,7 +64,10 @@ LOSE = -1
 #  Returns: None -- the game board passed as a parameter is modified
 #
 def swap(board, r1, c1, r2, c2):
-  pass
+    temp = board[r1][c1]       
+    board[r1][c1] = board[r2][c2] 
+    board[r2][c2] = temp         
+    return
 
 #
 #  Modify the board to clear all occurences of a given piece, replacing them
@@ -62,12 +79,58 @@ def swap(board, r1, c1, r2, c2):
 #
 #  Returns: None -- the game board passed as a parameter is modified
 #
-def clearAll(board, sym):
-  pass
+def clearAll(board, symbol):
+    rows = len(board)
+    cols = len(board[0]) if rows > 0 else 0
+    
+    
+    for i in range(rows):
+        for j in range(cols):
+            
+            if board[i][j] == symbol:
+                board[i][j] = EMPTY  
+pass
 
 #
 #  Insert your implementations of vLineAt and hLineAt here
-#
+def vLineAt(board, r, c):
+    rows = len(board)
+    target = board[r][c]
+    
+    if target == EMPTY:
+        return False
+        
+    if r + 2 < rows and board[r+1][c] == target and board[r+2][c] == target:
+        return True
+        
+    if r - 1 >= 0 and r + 1 < rows and board[r-1][c] == target and board[r+1][c] == target:
+        return True
+        
+    if r - 2 >= 0 and board[r-1][c] == target and board[r-2][c] == target:
+        return True
+        
+    return False
+
+def hLineAt(board, r, c):
+    cols = len(board[0])
+    target = board[r][c]
+    
+    if target == EMPTY:
+        return False
+        
+    
+    if c + 2 < cols and board[r][c+1] == target and board[r][c+2] == target:
+        return True
+        
+    
+    if c - 1 >= 0 and c + 1 < cols and board[r][c-1] == target and board[r][c+1] == target:
+        return True
+    
+    
+    if c - 2 >= 0 and board[r][c-1] == target and board[r][c-2] == target:
+        return True
+        
+    return False
 
 #
 #  Report whether or not two pieces on the board can be swapped.  The function
@@ -82,7 +145,19 @@ def clearAll(board, sym):
 #  Returns: True if the proposed swap creates a line.  False otherwise.
 #
 def canSwap(board, r1, c1, r2, c2):
-  return True
+  
+
+  board[r1][c1], board[r2][c2] = board[r2][c2], board[r1][c1]
+    
+  
+  match_pos1 = hLineAt(board, r1, c1) or vLineAt(board, r1, c1)
+  match_pos2 = hLineAt(board, r2, c2) or vLineAt(board, r2, c2)
+    
+  has_match = match_pos1 or match_pos2
+    
+  board[r1][c1], board[r2][c2] = board[r2][c2], board[r1][c1]
+    
+  return has_match
 
 #
 #  Identify two adjacent positions on the board that can be swapped to 
